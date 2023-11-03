@@ -1,37 +1,105 @@
-version: "3.4"
+version: "3"
 
 services:
+  
   zookeeper:
-    image: bitnami/zookeeper
-    restart: always
+    image: "confluentinc/cp-zookeeper:6.1.0"
+    container_name: zookeeper
     ports:
-      - "2181:2181"
-    volumes:
-      - "zookeeper_data:/bitnami"
+      - 2181:2181
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      TZ: Sao_Paulo/Brazil
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - ./.docker/zookeeper_data:/zookeeper
+    networks:
+      - techbankNet
+
   kafka:
-    image: bitnami/kafka
-    ports:
-      - "9092:9092"
-    restart: always
-    volumes:
-      - "kafka_data:/bitnami"
-    environment:
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+    image: "confluentinc/cp-enterprise-kafka:6.1.0"
+    container_name: kafka
     depends_on:
       - zookeeper
+    ports: 
+      - '9092:9092'
+    environment:
+      TZ: Sao_Paulo/Brazil
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+      CONFLUENT_METRICS_ENABLE: 'false'
+    volumes:
+      - ./.docker/kafka_data:/kafka
+    networks:
+      - techbankNet
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:7.3.0
+    hostname: control-center
+    container_name: control-center
+    depends_on:
+      - kafka
+    ports:
+      - "9021:9021"
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:29092'
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      PORT: 9021  
+    networks:
+      - techbankNet
+
+  mongo:
+    image: mongo
+    container_name: mongodb
+    restart: on-failure
+    environment:
+      # MONGO_INITDB_ROOT_USERNAME: purge
+      # MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGO_INITDB_DATABASE: bankAccount
+    ports:
+      - 27017:27017
+    volumes:
+      - ./.docker/mongodb_data_container:/data/db
+    networks:
+      - techbankNet
+
+  db:
+    image: mysql:latest
+    container_name: mysqldb
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      TZ: America/Sao_Paulo
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bankAccount
+      MYSQL_ROOT_HOST: '%' 
+      MYSQL_TCP_PORT: 3306
+    ports:
+      - 3306:3306
+    expose: 
+      - 3306
+    volumes:      
+      - ./.docker/mysql/db:/var/lib/mysql
+    networks:
+      - techbankNet
 
 volumes:
   zookeeper_data:
     driver: local
   kafka_data:
     driver: local
-   
+
 networks:
-  default:
-    external:
-      name: techbankNet
+  techbankNet:
+    driver: bridge 

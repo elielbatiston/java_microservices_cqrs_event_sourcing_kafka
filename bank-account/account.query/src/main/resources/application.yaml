@@ -13,7 +13,7 @@ spring:
     password: root
   kafka:
     listener:
-      ack-mode: manual_immediate
+      ack-mode: MANUAL_IMMEDIATE
     consumer:
       bootstrap-servers: localhost:9092
       group-id: bankaccConsumer
@@ -21,7 +21,7 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        string:
+        spring:
           json:
             trusted:
               packages: '*'

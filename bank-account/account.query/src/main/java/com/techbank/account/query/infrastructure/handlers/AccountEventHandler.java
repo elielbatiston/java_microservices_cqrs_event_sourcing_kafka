@@ -3,7 +3,7 @@ package com.techbank.account.query.infrastructure.handlers;
 import com.techbank.account.common.events.AccountClosedEvent;
 import com.techbank.account.common.events.AccountOpenedEvent;
 import com.techbank.account.common.events.FundsDepositedEvent;
-import com.techbank.account.common.events.FundsWithdrawEvent;
+import com.techbank.account.common.events.FundsWithdrawnEvent;
 import com.techbank.account.query.domain.AccountRepository;
 import com.techbank.account.query.domain.BankAccount;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class AccountEventHandler implements EventHandler {
 	public void on(final AccountOpenedEvent event) {
 		var bankAccount = BankAccount.builder()
 			.id(event.getId())
-			.accountHoler(event.getAccountHolder())
+			.accountHolder(event.getAccountHolder())
 			.creationDate(event.getCreatedDate())
 			.accountType(event.getAccountType())
 			.balance(event.getOpeningBalance())
@@ -40,7 +40,7 @@ public class AccountEventHandler implements EventHandler {
 	}
 
 	@Override
-	public void on(final FundsWithdrawEvent event) {
+	public void on(final FundsWithdrawnEvent event) {
 		var bankAccount = accountRepository.findById(event.getId());
 		if (bankAccount.isEmpty()) {
 			return ;

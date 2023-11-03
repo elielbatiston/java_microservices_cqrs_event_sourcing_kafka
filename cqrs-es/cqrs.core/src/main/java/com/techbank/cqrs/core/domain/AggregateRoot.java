@@ -26,7 +26,7 @@ public abstract class AggregateRoot {
 		return this.changes;
 	}
 
-	public void markChangeAsCommitted() {
+	public void markChangesAsCommitted() {
 		this.changes.clear();
 	}
 

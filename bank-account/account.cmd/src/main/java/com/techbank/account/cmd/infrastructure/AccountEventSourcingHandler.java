@@ -12,13 +12,14 @@ import java.util.Comparator;
 
 @Service
 public class AccountEventSourcingHandler implements EventSourcingHandler<AccountAggregate> {
+
 	@Autowired
 	private EventStore eventStore;
 
 	@Override
 	public void save(final AggregateRoot aggregate) {
 		eventStore.saveEvents(aggregate.getId(), aggregate.getUncommittedChanges(), aggregate.getVersion());
-		aggregate.markChangeAsCommitted();
+		aggregate.markChangesAsCommitted();
 	}
 
 	@Override

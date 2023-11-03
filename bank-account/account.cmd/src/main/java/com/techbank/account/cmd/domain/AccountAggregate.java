@@ -1,11 +1,10 @@
 package com.techbank.account.cmd.domain;
 
 import com.techbank.account.cmd.api.commands.OpenAccountCommand;
-import com.techbank.account.common.dto.AccountType;
 import com.techbank.account.common.events.AccountClosedEvent;
 import com.techbank.account.common.events.AccountOpenedEvent;
 import com.techbank.account.common.events.FundsDepositedEvent;
-import com.techbank.account.common.events.FundsWithdrawEvent;
+import com.techbank.account.common.events.FundsWithdrawnEvent;
 import com.techbank.cqrs.core.domain.AggregateRoot;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,7 +50,6 @@ public class AccountAggregate extends AggregateRoot {
 
 	public void apply(final FundsDepositedEvent event) {
 		this.id = event.getId();
-		this.active = true;
 		this.balance = event.getAmount();
 	}
 
@@ -59,14 +57,14 @@ public class AccountAggregate extends AggregateRoot {
 		if (!this.active) {
 			throw new IllegalStateException("Funds cannot be withdrawn from a closed account!");
 		}
-		raiseEvent(FundsWithdrawEvent.builder()
+		raiseEvent(FundsWithdrawnEvent.builder()
 			.id(this.id)
 			.amount(amount)
 			.build()
 		);
 	}
 
-	public void apply(final FundsWithdrawEvent event) {
+	public void apply(final FundsWithdrawnEvent event) {
 		this.id = event.getId();
 		this.balance = event.getAmount();
 	}

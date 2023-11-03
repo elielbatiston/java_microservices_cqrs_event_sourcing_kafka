@@ -3,9 +3,11 @@ package com.techbank.account.cmd.infrastructure;
 import com.techbank.cqrs.core.commands.BaseCommand;
 import com.techbank.cqrs.core.commands.CommandHandlerMethod;
 import com.techbank.cqrs.core.infrastructure.CommandDispatcher;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Service
 public class AccountCommandDispatcher implements CommandDispatcher {
 
 	private final Map<Class<? extends BaseCommand>, List<CommandHandlerMethod>> routes = new HashMap<>();

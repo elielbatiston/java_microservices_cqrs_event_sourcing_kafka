@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+@Getter
 @NoArgsConstructor
 public class AccountAggregate extends AggregateRoot {
 	private Boolean active;
-	@Getter
 	private double balance;
 
 	public AccountAggregate(final OpenAccountCommand command) {

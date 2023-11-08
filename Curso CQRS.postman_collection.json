@@ -1,0 +1,242 @@
+{
+	"info": {
+		"_postman_id": "e96d2ea1-d633-4ea6-a806-fea6d74a9215",
+		"name": "Curso CQRS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10393741"
+	},
+	"item": [
+		{
+			"name": "Command",
+			"item": [
+				{
+					"name": "POST /openBankAccount",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountHolder\": \"Jane Doe\",\n    \"accountType\": \"CURRENT\",\n    \"openingBalance\": 50000.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/openBankAccount",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"openBankAccount"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /depositFunds",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \n    \"amount\": 150.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/depositFunds/10bc9ab1-51f3-4e7d-9dce-d922d90eaa37",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"depositFunds",
+								"10bc9ab1-51f3-4e7d-9dce-d922d90eaa37"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /withdrawFunds",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/withdrawFunds/10bc9ab1-51f3-4e7d-9dce-d922d90eaa37",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"withdrawFunds",
+								"10bc9ab1-51f3-4e7d-9dce-d922d90eaa37"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /clouseAccount",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/closeBankAccount/62a4153a-81fc-43ae-851f-a88738644522",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"closeBankAccount",
+								"62a4153a-81fc-43ae-851f-a88738644522"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /restoreReadDb",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/restoreReadDb",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"restoreReadDb"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Query",
+			"item": [
+				{
+					"name": "GET /getAllAccounts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/api/v1/bankAccountLookup/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"v1",
+								"bankAccountLookup",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /getAccountById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/api/v1/bankAccountLookup/byId/10bc9ab1-51f3-4e7d-9dce-d922d90eaa37",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"v1",
+								"bankAccountLookup",
+								"byId",
+								"10bc9ab1-51f3-4e7d-9dce-d922d90eaa37"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /getAccountByHolder",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/api/v1/bankAccountLookup/byHolder/Jane Doe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"v1",
+								"bankAccountLookup",
+								"byHolder",
+								"Jane Doe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /getAccountWithBalance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/api/v1/bankAccountLookup/withBalance/GREATER_THAN/50",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"v1",
+								"bankAccountLookup",
+								"withBalance",
+								"GREATER_THAN",
+								"50"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

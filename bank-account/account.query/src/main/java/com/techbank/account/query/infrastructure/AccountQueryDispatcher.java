@@ -1,5 +1,6 @@
 package com.techbank.account.query.infrastructure;
 
+import com.techbank.cqrs.core.domain.BaseEntity;
 import com.techbank.cqrs.core.infrastructure.QueryDispatcher;
 import com.techbank.cqrs.core.queries.BaseQuery;
 import com.techbank.cqrs.core.queries.QueryHandlerMethod;
@@ -22,9 +23,9 @@ public class AccountQueryDispatcher implements QueryDispatcher {
 	}
 
 	@Override
-	public <U extends BaseQuery> List<U> send(BaseQuery query) {
+	public <U extends BaseEntity> List<U> send(BaseQuery query) {
 		final var handlers = routes.get(query.getClass());
-		if (handlers == null || handlers.size() <= 0) {
+		if (handlers == null || handlers.isEmpty()) {
 			throw new RuntimeException("No query handler was registered!");
 		}
 		if (handlers.size() > 1) {

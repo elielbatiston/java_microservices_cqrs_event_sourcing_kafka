@@ -1,10 +1,7 @@
 package com.techbank.account.query.infrastructure.consumers;
 
-import com.techbank.account.common.events.AccountClosedEvent;
-import com.techbank.account.common.events.AccountOpenedEvent;
-import com.techbank.account.common.events.FundsDepositedEvent;
-import com.techbank.account.common.events.FundsWithdrawnEvent;
 import com.techbank.account.query.infrastructure.handlers.EventHandler;
+import com.techbank.cqrs.core.events.BaseEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -17,31 +14,17 @@ public class AccountEventConsumer implements EventConsumer {
 	@Autowired
 	private EventHandler eventHandler;
 
-	@KafkaListener(topics = "AccountOpenedEvent", groupId = "${spring.kafka.consumer.group-id}")
+	@KafkaListener(topics = "${spring.kafka.topic}", groupId = "${spring.kafka.consumer.group-id}")
 	@Override
-	public void consume(@Payload final AccountOpenedEvent event, final Acknowledgment ack) {
-		eventHandler.on(event);
-		ack.acknowledge();
-	}
-
-	@KafkaListener(topics = "FundsDepositedEvent", groupId = "${spring.kafka.consumer.group-id}")
-	@Override
-	public void consume(@Payload final FundsDepositedEvent event, final Acknowledgment ack) {
-		eventHandler.on(event);
-		ack.acknowledge();
-	}
-
-	@KafkaListener(topics = "FundsWithdrawnEvent", groupId = "${spring.kafka.consumer.group-id}")
-	@Override
-	public void consume(@Payload final FundsWithdrawnEvent event, final Acknowledgment ack) {
-		eventHandler.on(event);
-		ack.acknowledge();
-	}
-
-	@KafkaListener(topics = "AccountClosedEvent", groupId = "${spring.kafka.consumer.group-id}")
-	@Override
-	public void consume(@Payload final AccountClosedEvent event, final Acknowledgment ack) {
-		eventHandler.on(event);
-		ack.acknowledge();
+	public void consume(final @Payload BaseEvent event, final Acknowledgment ack) {
+		try {
+			final var eventHandlerMethod = eventHandler.getClass()
+				.getDeclaredMethod("on", event.getClass());
+			eventHandlerMethod.setAccessible(true);
+			eventHandlerMethod.invoke(eventHandler, event);
+			ack.acknowledge();
+		} catch (final Exception e) {
+			throw new RuntimeException("Error while consuming event", e);
+		}
 	}
 }

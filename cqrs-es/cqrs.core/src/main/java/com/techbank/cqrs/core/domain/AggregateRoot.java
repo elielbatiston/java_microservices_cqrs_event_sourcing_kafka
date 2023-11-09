@@ -30,7 +30,7 @@ public abstract class AggregateRoot {
 		this.changes.clear();
 	}
 
-	protected void applyChanges(final BaseEvent event, Boolean isNewEvent) {
+	protected void applyChanges(final BaseEvent event, final Boolean isNewEvent) {
 		try {
 			var method = getClass().getDeclaredMethod("apply", event.getClass());
 			method.setAccessible(true);
